@@ -114,6 +114,18 @@ async def cycler(event):
             print(f"number {i} cycle", end="\r")
     print(f"number {i} cycle")
 
+#================================================#
+@client.on(events.NewMessage(outgoing=True, pattern=r'boom'))
+async def _(event):
+    car = "                    🚗"
+    for i in range(int(len(car) / 2)):
+        time.sleep(0.5)
+        await event.edit("🚧" + car[i * 2:])
+    await event.edit("💥")
+    print("online!")
+    time.sleep(5)
+    await event.delete()
+
 
 client.start()
 print("Running...")
