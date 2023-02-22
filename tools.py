@@ -7,7 +7,7 @@ def getTextSize(text, font):
     return imgDraw.textbbox((0,0), text, font)[2:]
 
 def textToSticker(text):
-    font = ImageFont.truetype("Supercell-magic-webfont.ttf", size=128)
+    font = ImageFont.truetype("assets/Lalezar-Regular.ttf", size=128)
     x, y = getTextSize(text, font)
     img = Image.new("RGBA", (x+40, y+5), color=0)
     imgDraw = ImageDraw.Draw(img)
