@@ -95,8 +95,8 @@ async def gensticker(event):
     text = message.removeprefix("&")
     color = "#893bff" # default
     if text[0] == "#":
-        text = text.split()[1:]
         color = text.split()[0]
+        text = text.split()[1:]
     img = tools.textToSticker(text, color)
     await client.send_file(chatId, img, reply_to=replyed)
     print(f"sticker of \"{text}\" sent to", chatId)
