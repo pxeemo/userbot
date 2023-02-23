@@ -1,17 +1,25 @@
 from PIL import Image, ImageDraw, ImageFont
 import io
 
+def hex_to_rgb(hex):
+    # "hex" should be a string, such as "#FFF" or "#FFFFFF"
+    hex = hex.lstrip('#')
+    hlen = len(hex)
+    rgb = tuple(int(hex[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
+    return rgb
+
 def getTextSize(text, font):
     img = Image.new("RGB", (512, 512))
     imgDraw = ImageDraw.Draw(img)
     return imgDraw.textbbox((0,0), text, font)[2:]
 
-def textToSticker(text):
-    font = ImageFont.truetype("assets/Lalezar-Regular.ttf", size=128)
+def textToSticker(text: str, color_hex: str = "#893bff"):
+    font = ImageFont.truetype("assets/Mikhak-Black.ttf", size=128)
     x, y = getTextSize(text, font)
-    img = Image.new("RGBA", (x+40, y+5), color=0)
+    img = Image.new("RGBA", (x+40, y+15), color=0)
     imgDraw = ImageDraw.Draw(img)
-    imgDraw.text((20, -15), text, fill="purple", font=font, stroke_width=6, stroke_fill="orange")
+    color = hex_to_rgb(color_hex)
+    imgDraw.text((20, -15), text, fill=color, font=font, stroke_width=4, stroke_fill=(108, 48, 130))
     img.thumbnail((512, 512))
     img_bin = io.BytesIO()
     img.save(img_bin, "WEBP")
