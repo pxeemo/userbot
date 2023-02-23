@@ -13,7 +13,7 @@ def getTextSize(text, font):
     imgDraw = ImageDraw.Draw(img)
     return imgDraw.textbbox((0,0), text, font)[2:]
 
-def textToSticker(text: str, color_hex: str = "#893bff"):
+def textToSticker(text: str, color_hex: str):
     font = ImageFont.truetype("assets/Mikhak-Black.ttf", size=128)
     x, y = getTextSize(text, font)
     img = Image.new("RGBA", (x+40, y+15), color=0)

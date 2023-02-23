@@ -46,7 +46,9 @@ async def text2hex(event):
 async def text2bin(event):
     message = event.raw_text
     print(message)
-    encoded = ' '.join(format(i, '08b') for i in bytearray(message.removeprefix(".bin "), encoding='utf-8'))
+    encoded = ' '.join(format(i, '08b') for i in bytearray(
+        message.removeprefix(".bin "), 
+        encoding='utf-8'))
     await event.edit(encoded)
     print(encoded)
 
@@ -91,7 +93,11 @@ async def gensticker(event):
     replyed = await event.get_reply_message()
     chatId = event.chat_id
     text = message.removeprefix("&")
-    img = tools.textToSticker(text)
+    color = "#893bff" # default
+    if text[0] == "#":
+        text = text.split()[1:]
+        color = text.split()[0]
+    img = tools.textToSticker(text, color)
     await client.send_file(chatId, img, reply_to=replyed)
     print(f"sticker of \"{text}\" sent to", chatId)
 
