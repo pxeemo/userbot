@@ -8,8 +8,8 @@ def hex_to_rgb(hex):
     rgb = tuple(int(hex[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
     return rgb
 
+# format PIL image to binary webp sticker
 def sticker_bin(img):
-    # format PIL image to binary webp sticker
     img.thumbnail((512, 512))
     img_bin = io.BytesIO()
     img.save(img_bin, "WEBP")
