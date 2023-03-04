@@ -17,14 +17,14 @@ def sticker_bin(img):
     img_bin.name = "sticker.webp"
     return img_bin
 
-def getTextSize(text, font):
+def get_text_size(text, font):
     img = Image.new("RGB", (512, 512))
     imgDraw = ImageDraw.Draw(img)
     return imgDraw.textbbox((0,0), text, font)[2:]
 
-def textToSticker(text: str, color_hex: str):
+def text2sticker(text: str, color_hex: str):
     font = ImageFont.truetype("assets/Mikhak-Black.ttf", size=128)
-    x, y = getTextSize(text, font)
+    x, y = get_text_size(text, font)
     img = Image.new("RGBA", (x+40, y+15), color=0)
     imgDraw = ImageDraw.Draw(img)
     color = hex_to_rgb(color_hex)
@@ -32,7 +32,7 @@ def textToSticker(text: str, color_hex: str):
     return sticker_bin(img)
 
 def khabi_sticker(text: str, color_hex: str):
-    text_img = Image.open(textToSticker(text, color_hex))
+    text_img = Image.open(text2sticker(text, color_hex))
     text_img_x, text_img_y = text_img.size
     khabi = Image.open("assets/khabi.webp")
     new = Image.new("RGBA", (text_img_x + 300, 512))
