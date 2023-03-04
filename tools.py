@@ -8,6 +8,15 @@ def hex_to_rgb(hex):
     rgb = tuple(int(hex[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
     return rgb
 
+def sticker_bin(img):
+    # format PIL image to binary webp sticker
+    img.thumbnail((512, 512))
+    img_bin = io.BytesIO()
+    img.save(img_bin, "WEBP")
+    img_bin.seek(0)
+    img_bin.name = "sticker.webp"
+    return img_bin
+
 def getTextSize(text, font):
     img = Image.new("RGB", (512, 512))
     imgDraw = ImageDraw.Draw(img)
@@ -20,12 +29,7 @@ def textToSticker(text: str, color_hex: str):
     imgDraw = ImageDraw.Draw(img)
     color = hex_to_rgb(color_hex)
     imgDraw.text((20, -15), text, fill=color, font=font, stroke_width=4, stroke_fill=(108, 48, 130))
-    img.thumbnail((512, 512))
-    img_bin = io.BytesIO()
-    img.save(img_bin, "WEBP")
-    img_bin.seek(0)
-    img_bin.name = "sticker.webp"
-    return img_bin
+    return sticker_bin(img)
 
 def khabi_sticker(text: str, color_hex: str):
     text_img = Image.open(textToSticker(text, color_hex))
@@ -34,13 +38,7 @@ def khabi_sticker(text: str, color_hex: str):
     new = Image.new("RGBA", (text_img_x + 300, 512))
     new.paste(khabi, (0, 0))
     new.paste(text_img, (300, 450 - text_img_y))
-    new.thumbnail((512, 512))
-
-    img_bin = io.BytesIO()
-    new.save(img_bin, "WEBP")
-    img_bin.seek(0)
-    img_bin.name = "sticker.webp"
-    return img_bin
+    return sticker_bin(new)
 
 
 import base64, base58
