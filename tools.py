@@ -27,6 +27,22 @@ def textToSticker(text: str, color_hex: str):
     img_bin.name = "sticker.webp"
     return img_bin
 
+def khabi_sticker(text: str, color_hex: str):
+    text_img = Image.open(textToSticker(text, color_hex))
+    text_img_x, text_img_y = text_img.size
+    khabi = Image.open("assets/khabi.webp")
+    new = Image.new("RGBA", (text_img_x + 300, 512))
+    new.paste(khabi, (0, 0))
+    new.paste(text_img, (300, 450 - text_img_y))
+    new.thumbnail((512, 512))
+
+    img_bin = io.BytesIO()
+    new.save(img_bin, "WEBP")
+    img_bin.seek(0)
+    img_bin.name = "sticker.webp"
+    return img_bin
+
+
 import base64, base58
 def b_encoder(text, mod):
     text = text.encode()

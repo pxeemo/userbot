@@ -86,20 +86,35 @@ async def pic2sticker(event):
     print("sticker of photo")
 
 #=============== text to sticker ================#
-@client.on(events.NewMessage(outgoing=True, pattern=r"&"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&s"))
 async def gensticker(event):
     await event.delete()
     message = event.raw_text
     replyed = await event.get_reply_message()
     chatId = event.chat_id
-    text = message.removeprefix("&")
+    text = message.removeprefix("&s")
     color = "#893bff" # default
     if text[0] == "#":
-        color = text.split()[0]
-        text = text.split()[1:]
+        color = text.split(" ")[0]
+        text = " ".join(text.split(" ")[1:])
     img = tools.textToSticker(text, color)
     await client.send_file(chatId, img, reply_to=replyed)
     print(f"sticker of \"{text}\" sent to", chatId)
+
+@client.on(events.NewMessage(outgoing=True, pattern=r"&khabi"))
+async def gensticker(event):
+    await event.delete()
+    message = event.raw_text
+    replyed = await event.get_reply_message()
+    chatId = event.chat_id
+    text = message.removeprefix("&khabi")
+    color = "#893bff" # default
+    if text[0] == "#":
+        color = text.split(" ")[0]
+        text = " ".join(text.split(" ")[1:])
+    img = tools.khabi_sticker(text, color)
+    await client.send_file(chatId, img, reply_to=replyed)
+    print(f"khabi sticker of \"{text}\" sent to", chatId)
 
 #================================================#
 @client.on(events.NewMessage(outgoing=True, pattern=r"\.cycle"))
