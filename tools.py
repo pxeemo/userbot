@@ -1,14 +1,18 @@
+import base58
+import base64
 from PIL import Image, ImageDraw, ImageFont
 import io
 
-def hex_to_rgb(hex):
+
+def hex_to_rgb(color_hex: str):
     # "hex" should be a string, such as "#FFF" or "#FFFFFF"
-    hex = hex.lstrip('#')
-    hlen = len(hex)
-    rgb = tuple(int(hex[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
+    color_hex = color_hex.lstrip('#')
+    rgb = tuple(int(color_hex[i:i+2], 16) for i in range(0, 6, 2))
     return rgb
 
 # format PIL image to binary webp sticker
+
+
 def sticker_bin(img):
     img.thumbnail((512, 512))
     img_bin = io.BytesIO()
@@ -17,10 +21,12 @@ def sticker_bin(img):
     img_bin.name = "sticker.webp"
     return img_bin
 
+
 def get_text_size(text, font):
     img = Image.new("RGB", (512, 512))
     imgDraw = ImageDraw.Draw(img)
-    return imgDraw.textbbox((0,0), text, font)[2:]
+    return imgDraw.textbbox((0, 0), text, font)[2:]
+
 
 def text2sticker(text: str, color_hex: str):
     font = ImageFont.truetype("assets/Mikhak-Black.ttf", size=128)
@@ -28,20 +34,25 @@ def text2sticker(text: str, color_hex: str):
     img = Image.new("RGBA", (x+40, y+15), color=0)
     imgDraw = ImageDraw.Draw(img)
     color = hex_to_rgb(color_hex)
-    imgDraw.text((20, -15), text, fill=color, font=font, stroke_width=4, stroke_fill=(108, 48, 130))
+    imgDraw.text((20, -15), text, fill=color, font=font,
+                 stroke_width=4, stroke_fill=(108, 48, 130))
     return sticker_bin(img)
 
+
 def khabi_sticker(text: str, color_hex: str):
-    text_img = Image.open(text2sticker(text, color_hex))
-    text_img_x, text_img_y = text_img.size
-    khabi = Image.open("assets/khabi.webp")
-    new = Image.new("RGBA", (text_img_x + 300, 512))
-    new.paste(khabi, (0, 0))
-    new.paste(text_img, (300, 450 - text_img_y))
-    return sticker_bin(new)
+    khabi_image = Image.open("assets/khabi.webp")
+    khabi_image_x, khabi_image_y = khabi_image.size
+
+    text_image = Image.open(text2sticker(text, color_hex))
+    text_image_x, text_image_y = text_image.size
+
+    new_image = Image.new("RGBA", (512, khabi_image_y+text_image_y))
+    new_image.paste(khabi_image, (0, 0))
+    text_start_x = int(int(khabi_image_x-text_image_x)/2)
+    new_image.paste(text_image, (text_start_x, khabi_image_x-20))
+    return sticker_bin(new_image)
 
 
-import base64, base58
 def b_encoder(text, mod):
     text = text.encode()
     if mod == "85":
