@@ -7,7 +7,6 @@ from myconf import *
 from telethon import types
 import tools
 import codecs
-import re
 
 client = TelegramClient("telethon", api_id, api_hash)
 
@@ -62,6 +61,18 @@ async def text2bin(event):
         encoding='utf-8'))
     await event.edit(encoded)
     print(encoded)
+
+# ============== python code runner ==============#
+
+
+@client.on(events.NewMessage(outgoing=True, pattern=r"&!"))
+async def shell(event):
+    message = event.raw_text
+    code = message.removeprefix("&!")
+    output = subprocess.getoutput(code)
+    result = f"🐡 {code}\n\n{output}"
+
+    await event.edit(text=result)
 
 # ============== python code runner ==============#
 
