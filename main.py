@@ -83,12 +83,8 @@ async def python_runner(event):
     code = str(message.removeprefix(message.split()[0]))[1:]
     output = subprocess.getoutput(
         'python -c "' + code.replace("\\", r"\\").replace("\"", r"\"") + '"')
-    result = "🔹PYTHON CODE🔺\n" + code + "\n\n🔸OUTPUT🔻\n" + output
-    entities = [
-        types.MessageEntityBold(0, 16),
-        types.MessageEntityPre(16, len(code), "python"),
-        types.MessageEntityBold(len(code)+18, 10)
-    ]
+    result = f"🐍 {code}\n\n{output}"
+    entities = [types.MessageEntityPre(3, len(code), "python")]
 
     await event.edit(
         text=result,
