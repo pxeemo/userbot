@@ -71,8 +71,15 @@ async def shell(event):
     code = message.removeprefix("&!")
     output = subprocess.getoutput(code)
     result = f"🐡 {code}\n\n{output}"
+    entities = [
+        types.MessageEntityCode(3, len(code)),
+        types.MessageEntityCode(len(code)+5, len(output))
+    ]
 
-    await event.edit(text=result)
+    await event.edit(
+        text=result,
+        formatting_entities=entities
+    )
 
 # ============== python code runner ==============#
 
@@ -84,7 +91,10 @@ async def python_runner(event):
     output = subprocess.getoutput(
         'python -c "' + code.replace("\\", r"\\").replace("\"", r"\"") + '"')
     result = f"🐍 {code}\n\n{output}"
-    entities = [types.MessageEntityPre(3, len(code), "python")]
+    entities = [
+        types.MessageEntityPre(3, len(code), "python"),
+        types.MessageEntityCode(len(code)+5, len(output))
+    ]
 
     await event.edit(
         text=result,
