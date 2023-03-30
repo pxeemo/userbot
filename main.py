@@ -90,16 +90,9 @@ async def python_runner(event):
     code = str(message.removeprefix(message.split()[0]))[1:]
     output = subprocess.getoutput(
         'python -c "' + code.replace("\\", r"\\").replace("\"", r"\"") + '"')
-    result = f"🐍 {code}\n\n{output}"
-    entities = [
-        types.MessageEntityPre(3, len(code), "python"),
-        types.MessageEntityCode(len(code)+5, len(output))
-    ]
-
-    await event.edit(
-        text=result,
-        formatting_entities=entities
-    )
+    result = '🐍 <pre><code class="language_python">{}</code></pre>\n\n{}'
+    result = result.format(code, output)
+    await event.edit(result)
 
 # ================ pic to sticker ================#
 
