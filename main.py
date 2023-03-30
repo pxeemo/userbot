@@ -70,16 +70,9 @@ async def shell(event):
     message = event.raw_text
     code = message.removeprefix("&!")
     output = subprocess.getoutput(code)
-    result = f"🐡 {code}\n\n{output}"
-    entities = [
-        types.MessageEntityCode(3, len(code)),
-        types.MessageEntityCode(len(code)+5, len(output))
-    ]
-
-    await event.edit(
-        text=result,
-        formatting_entities=entities
-    )
+    result = '🐡 <code>{}</code>\n\n{}'
+    result = result.format(code, output)
+    await event.edit(result)
 
 # ============== python code runner ==============#
 
