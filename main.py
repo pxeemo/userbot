@@ -4,7 +4,6 @@ import io
 import time
 from PIL import Image
 from myconf import *
-from telethon import types
 import tools
 import codecs
 
