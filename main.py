@@ -97,7 +97,7 @@ async def pic2sticker(event):
     img = Image.open(io.BytesIO(
         await client.download_media(
             event.message if event.message.media else replyed,
-            file=bytes
+            file=bytes # type: ignore
         )
     ))
     img.thumbnail((512, 512))
