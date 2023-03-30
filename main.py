@@ -193,5 +193,6 @@ async def _(event):
 
 
 client.start()
+client.parse_mode = "html"
 print("Running...")
 client.run_until_disconnected()
