@@ -12,18 +12,17 @@ client = TelegramClient("telethon", api_id, api_hash)
 # =================== spammer ====================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern="&[0-9]+ "))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&(\d+),?(\d*) (.*)"))
 async def spammer(event):
-    message = str(event.text)
-    text = str(" ").join(message.split()[1:])
-    times = int(message.split()[0].removeprefix("&"))
+    times, delay, text = event.pattern_match.groups()
     chatId = event.chat_id
-    print(message)
     await event.delete()
     replyed = await event.get_reply_message()
-    for i in range(times):
+    for i in range(int(times)):
         await client.send_message(chatId, text, reply_to=replyed)
         print("\r", i+1, "spam messages to", chatId, end="")
+        if delay:
+            time.sleep(int(delay))
     print()
 
 # ================= base encoder =================#
@@ -97,7 +96,7 @@ async def pic2sticker(event):
     img = Image.open(io.BytesIO(
         await client.download_media(
             event.message if event.message.media else replyed,
-            file=bytes # type: ignore
+            file=bytes  # type: ignore
         )
     ))
     img.thumbnail((512, 512))
