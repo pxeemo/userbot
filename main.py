@@ -28,13 +28,12 @@ async def spammer(event):
 # ================= base encoder =================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&b\d{2}\s"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&b(\d{2})\s(.*)"))
 async def base_encoder(event):
-    message = str(event.raw_text)
-    text, mod = message[5:], message[2:4]
-    encoded = tools.b_encoder(text, mod)
+    mode, text = event.pattern_match.groups()
+    encoded = tools.b_encoder(text, mode)
     await event.edit(encoded)
-    print("base" + mod, "encode of", text)
+    print("base" + mode, "encode of", text)
 
 # ================= hex encoder ==================#
 

@@ -53,15 +53,15 @@ def khabi_sticker(text: str, color_hex: str):
     return sticker_bin(new_image)
 
 
-def b_encoder(text, mod):
+def b_encoder(text, mode):
     text = text.encode()
-    if mod == "85":
+    if mode == "85":
         encoded = base64.b85encode(text)
-    elif mod == "64":
+    elif mode == "64":
         encoded = base64.b64encode(text)
-    elif mod == "58":
+    elif mode == "58":
         encoded = base58.b58encode(text)
-    elif mod == "32":
+    elif mode == "32":
         encoded = base64.b32encode(text)
     else:
         encoded = b"Not supported!"
