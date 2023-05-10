@@ -12,7 +12,7 @@ client = TelegramClient("telethon", api_id, api_hash)
 # =================== spammer ====================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&(\d+),?(\d*) (.*)"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&(\d+),?(\d*)\s(.*)"))
 async def spammer(event):
     times, delay, text = event.pattern_match.groups()
     chatId = event.chat_id
@@ -38,10 +38,9 @@ async def base_encoder(event):
 # ================= hex encoder ==================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r'&hex\s'))
+@client.on(events.NewMessage(outgoing=True, pattern=r'&hex\s(.*)'))
 async def text2hex(event):
-    message = event.raw_text
-    text = message[4:].encode()
+    text = event.pattern_match.group(1)
     encoded = codecs.encode(text, "hex").decode()
     await event.edit(encoded)
     print("hex encode of", encoded)
@@ -49,35 +48,30 @@ async def text2hex(event):
 # ================ binary encoder ================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r'&bin\s'))
+@client.on(events.NewMessage(outgoing=True, pattern=r'&bin\s(.*)'))
 async def text2bin(event):
-    message = event.raw_text
-    print(message)
-    encoded = ' '.join(format(i, '08b') for i in bytearray(
-        message.removeprefix(".bin "),
-        encoding='utf-8'))
+    text = event.pattern_match.group(1)
+    encoded = ' '.join(format(i, '08b')
+                       for i in bytearray(text, encoding='utf-8'))
     await event.edit(encoded)
-    print(encoded)
+    print("sent binary of", text)
 
 # ============== python code runner ==============#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&!"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&!\s?(.*)"))
 async def shell(event):
-    message = event.raw_text
-    code = message.removeprefix("&!")
+    code = event.pattern_match.group(1)
     output = subprocess.getoutput(code)
-    result = '🐡 <code>{}</code>\n\n{}'
-    result = result.format(code, output)
+    result = f"🐡 <code>{code}</code>\n\n{output}"
     await event.edit(result)
 
 # ============== python code runner ==============#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&py[\n\s]"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&py\s(.*)"))
 async def python_runner(event):
-    message = str(event.raw_text)
-    code = str(message.removeprefix(message.split()[0]))[1:]
+    code = event.pattern_match.group(1)
     output = subprocess.getoutput(
         'python -c "' + code.replace("\\", r"\\").replace("\"", r"\"") + '"')
     result = '🐍 <pre><code class="language_python">{}</code></pre>\n\n{}'
@@ -109,47 +103,42 @@ async def pic2sticker(event):
 # =============== text to sticker ================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&s(#.{6})?\s"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&s(#[\da-f]{6})?\s(.*)"))
 async def gen_sticker(event):
     await event.delete()
-    message = event.raw_text
     replyed = await event.get_reply_message()
     chatId = event.chat_id
-    prefix = message.split(" ")[0]
-    text = " ".join(message.split(" ")[1:])
-    color = prefix.removeprefix("&s") if "#" in prefix else "#893bff"
+    color, text = event.pattern_match.groups()
+    if not color:
+        color = "#893bff"
     img = tools.text2sticker(text, color)
-
     await client.send_file(chatId, img, reply_to=replyed)
-    print(f"sticker of \"{text}\" sent to", chatId)
+    print(f'sticker of "{text}" sent to', chatId)
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&khabi"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&khabi(#[\da-f]{6})?\s(.*)"))
 async def gen_khabi_sticker(event):
     await event.delete()
-    message = event.raw_text
     replyed = await event.get_reply_message()
     chatId = event.chat_id
-    text = message.removeprefix("&khabi")
-    color = "#893bff"  # default
-    if text[0] == "#":
-        color = text.split(" ")[0]
-        text = " ".join(text.split(" ")[1:])
+    color, text = event.pattern_match.groups()
+    if not color:
+        color = "#893bff"  # default
     img = tools.khabi_sticker(text, color)
     await client.send_file(chatId, img, reply_to=replyed)
-    print(f"khabi sticker of \"{text}\" sent to", chatId)
+    print(f'khabi sticker of "{text}" sent to', chatId)
 
 # ================================================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&cycle"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&cycle\s(.*)"))
 async def cycler(event):
     def cycle(items):
         items = items.split()
         long = len(items)
         return [''.join(list(items*2)[i:i+long]) for i in range(long)]
 
-    message = str(event.raw_text).removeprefix("&cycle ")
+    message = event.pattern_match.group(1)
 
     i = 0
     while i < 100:
@@ -163,13 +152,9 @@ async def cycler(event):
 # ================================================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r'boom'))
+@client.on(events.NewMessage(outgoing=True, pattern=r'pex'))
 async def _(event):
-    car = "                    🚗"
-    for i in range(int(len(car) / 2)):
-        time.sleep(0.5)
-        await event.edit("🚧" + car[i * 2:])
-    await event.edit("💥")
+    await event.edit("pex is emo!")
     print("online!")
     time.sleep(5)
     await event.delete()
