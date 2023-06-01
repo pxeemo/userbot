@@ -133,16 +133,14 @@ async def gen_khabi_sticker(event):
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"&cycle\s(.*)"))
 async def cycler(event):
-    def cycle(items):
-        items = items.split()
-        long = len(items)
-        return [''.join(list(items*2)[i:i+long]) for i in range(long)]
-
     message = event.pattern_match.group(1)
+    items = message.split()
+    long = len(items)
+    cycle = [''.join(list(items*2)[i:i+long]) for i in range(long)]
 
     i = 0
     while i < 100:
-        for update in cycle(message):
+        for update in cycle:
             await event.edit(update)
             time.sleep(0.5)
             i += 1
