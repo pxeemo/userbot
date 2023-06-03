@@ -1,4 +1,5 @@
-<h1><center>UserBot</center></h1>
+# UserBot
+This is a small bot that runs on your telegram account and you can give it some specified commands to run.
 
 ## Installation
 Just clone the repository and run the main.py
