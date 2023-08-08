@@ -3,7 +3,7 @@ import subprocess
 import io
 import time
 from PIL import Image
-from myconf import *
+from myconf import api_id, api_hash
 import tools
 import codecs
 
@@ -69,19 +69,23 @@ async def shell(event):
 # ============== python code runner ==============#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&py\s(.*)"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&py\s+(.*)"))
 async def python_runner(event):
     code = event.pattern_match.group(1)
-    output = subprocess.getoutput(
-        'python -c "' + code.replace("\\", r"\\").replace("\"", r"\"") + '"')
+    process = subprocess.Popen(['python'],
+                               stdin=subprocess.PIPE,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE,
+                               universal_newlines=True)
+    output, error = process.communicate(input=code)
     result = '🐍 <pre><code class="language_python">{}</code></pre>\n\n{}'
-    result = result.format(code, output)
+    result = result.format(code, error or output)
     await event.edit(result)
 
 # ================ pic to sticker ================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&(?:sticker|استیکر)"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"&(sticker|استیکر)"))
 async def pic2sticker(event):
     chatId = event.chat_id
     replyed = await event.get_reply_message()
@@ -103,12 +107,13 @@ async def pic2sticker(event):
 # =============== text to sticker ================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&s(#[\da-f]{6})?\s(.*)"))
+@client.on(events.NewMessage(outgoing=True,
+                             pattern=r"&(s|س)(#[\da-f]{6})?\s(.*)"))
 async def gen_sticker(event):
     await event.delete()
     replyed = await event.get_reply_message()
     chatId = event.chat_id
-    color, text = event.pattern_match.groups()
+    _, color, text = event.pattern_match.groups()
     if not color:
         color = "#893bff"
     img = tools.text2sticker(text, color)
@@ -116,7 +121,8 @@ async def gen_sticker(event):
     print(f'sticker of "{text}" sent to', chatId)
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&khabi(#[\da-f]{6})?\s(.*)"))
+@client.on(events.NewMessage(outgoing=True,
+                             pattern=r"&khabi(#[\da-f]{6})?\s(.*)"))
 async def gen_khabi_sticker(event):
     await event.delete()
     replyed = await event.get_reply_message()
@@ -150,9 +156,9 @@ async def cycler(event):
 # ================================================#
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r'pex'))
+@client.on(events.NewMessage(outgoing=True, pattern=r'pxe'))
 async def _(event):
-    await event.edit("pex is emo!")
+    await event.edit("pxe is emo!")
     print("online!")
     time.sleep(5)
     await event.delete()
