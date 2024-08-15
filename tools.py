@@ -1,5 +1,3 @@
-import base58
-import base64
 from PIL import Image, ImageDraw, ImageFont
 import io
 
@@ -10,10 +8,12 @@ def hex_to_rgb(color_hex: str):
     rgb = tuple(int(color_hex[i:i+2], 16) for i in range(0, 6, 2))
     return rgb
 
-# format PIL image to binary webp sticker
-
 
 def sticker_bin(img):
+    """
+    takes PIL image type
+    returns binary webp sticker
+    """
     img.thumbnail((512, 512))
     img_bin = io.BytesIO()
     img.save(img_bin, "WEBP")
@@ -51,18 +51,3 @@ def khabi_sticker(text: str, color_hex: str):
     text_start_x = int(int(khabi_image_x-text_image_x)/2)
     new_image.paste(text_image, (text_start_x, khabi_image_x-20))
     return sticker_bin(new_image)
-
-
-def b_encoder(text, mode):
-    text = text.encode()
-    if mode == "85":
-        encoded = base64.b85encode(text)
-    elif mode == "64":
-        encoded = base64.b64encode(text)
-    elif mode == "58":
-        encoded = base58.b58encode(text)
-    elif mode == "32":
-        encoded = base64.b32encode(text)
-    else:
-        encoded = b"Not supported!"
-    return encoded.decode()
