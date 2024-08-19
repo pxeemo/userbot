@@ -22,7 +22,7 @@ async def spammer(event):
             time.sleep(int(delay))
     print()
 
-# ============= python code runner ============= #
+# ============== shell code runner ============= #
 
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"&!\s?(.*)"))
@@ -109,8 +109,8 @@ async def convertor(
 
 @client.on(events.NewMessage(
     outgoing=True,
-    pattern=r"&(s|س)(#[\da-f]{6})?\s(.*)")
-)
+    pattern=r"&(s|س)(#[\da-f]{6})?\s(.*)"
+))
 async def gen_sticker(event):
     await event.delete()
     replyed = await event.get_reply_message()
@@ -120,7 +120,7 @@ async def gen_sticker(event):
         color = "#893bff"
     img = tools.text2sticker(text, color)
     await client.send_file(chatId, img, reply_to=replyed)
-    print(f'sticker of "{text}" sent to', chatId)
+    print(f'sticker of "{text}" sent to {chatId}')
 
 
 @client.on(events.NewMessage(
@@ -136,7 +136,7 @@ async def gen_khabi_sticker(event):
         color = "#893bff"  # default
     img = tools.khabi_sticker(text, color)
     await client.send_file(chatId, img, reply_to=replyed)
-    print(f'khabi sticker of "{text}" sent to', chatId)
+    print(f'khabi sticker of "{text}" sent to {chatId}')
 
 # ============================================== #
 
@@ -145,8 +145,8 @@ async def gen_khabi_sticker(event):
 async def cycler(event):
     message = event.pattern_match.group(1)
     items = message.split()
-    long = len(items)
-    cycle = [''.join(list(items*2)[i:i+long]) for i in range(long)]
+    length = len(items)
+    cycle = [''.join(list(items*2)[i:i+length]) for i in range(length)]
 
     i = 0
     while i < 100:

@@ -2,14 +2,14 @@ from PIL import Image, ImageDraw, ImageFont
 import io
 
 
-def hex_to_rgb(color_hex: str):
+def hex_to_rgb(color_hex: str) -> tuple:
     # "hex" should be a string, such as "#FFF" or "#FFFFFF"
     color_hex = color_hex.lstrip('#')
     rgb = tuple(int(color_hex[i:i+2], 16) for i in range(0, 6, 2))
     return rgb
 
 
-def sticker_bin(img):
+def sticker_bin(img: Image) -> bytes:
     """
     takes PIL image type
     returns binary webp sticker
@@ -22,24 +22,20 @@ def sticker_bin(img):
     return img_bin
 
 
-def get_text_size(text, font):
-    img = Image.new("RGB", (512, 512))
-    imgDraw = ImageDraw.Draw(img)
-    return imgDraw.textbbox((0, 0), text, font)[2:]
-
-
-def text2sticker(text: str, color_hex: str):
+def text2sticker(text: str, color_hex: str) -> bytes:
     font = ImageFont.truetype("assets/Mikhak-Black.ttf", size=128)
-    x, y = get_text_size(text, font)
-    img = Image.new("RGBA", (x+40, y+15), color=0)
+    text_width, text_height = font.getbbox(text)[2:]
+    img = Image.new("RGBA", (text_width+40, text_height+15), color=0)
     imgDraw = ImageDraw.Draw(img)
     color = hex_to_rgb(color_hex)
-    imgDraw.text((20, -15), text, fill=color, font=font,
-                 stroke_width=4, stroke_fill=(108, 48, 130))
+    imgDraw.text(
+        (20, -15), text, fill=color, font=font,
+        stroke_width=4, stroke_fill=(108, 48, 130)
+    )
     return sticker_bin(img)
 
 
-def khabi_sticker(text: str, color_hex: str):
+def khabi_sticker(text: str, color_hex: str) -> bytes:
     khabi_image = Image.open("assets/khabi.webp")
     khabi_image_x, khabi_image_y = khabi_image.size
 
