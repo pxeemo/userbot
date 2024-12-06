@@ -25,7 +25,7 @@ async def spammer(event):
 # ============== shell code runner ============= #
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&!\s?(.*)"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"(?s)&!\s?(.*)"))
 async def shell(event):
     code = event.pattern_match.group(1)
     output = subprocess.getoutput(code)
@@ -35,7 +35,7 @@ async def shell(event):
 # ============= python code runner ============= #
 
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"&py\s+(.*)"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"(?s)&py\s+(.*)"))
 async def python_runner(event):
     code = event.pattern_match.group(1)
     process = subprocess.Popen(
